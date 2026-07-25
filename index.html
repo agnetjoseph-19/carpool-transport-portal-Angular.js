@@ -21,8 +21,6 @@
     <div class="header-content">
         <h1>{{appName | uppercase}}</h1>
         <p>{{welcomeMessage}} <span>Team: <strong ng-style="{'color': adminColor, 'font-weight': '600'}">{{teamName}}</strong></span></p>
-        <p>Project Guide: <strong>{{projectGuide}}</strong> | Leader: <strong>{{teamLeader}}</strong></p>
-        <p>Today: {{today | date:'fullDate'}} | Contact: <strong>{{companyEmail | lowercase}}</strong></p>
     </div>
 
     <button class="theme-toggle-btn" type="button" ng-click="toggleTheme()">

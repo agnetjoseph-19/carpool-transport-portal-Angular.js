@@ -9,10 +9,7 @@ app.controller('dashboardController', ['$scope', function ($scope) {
     // ==========================================
     $scope.appName = "Car Pooling & Campus Transport Portal";
     $scope.teamName = "Think Tank";
-    $scope.teamLeader = "Sumedha C P";
-    $scope.projectGuide = "Shahid Khan";
-    $scope.adminColor = "#0284c7";
-    $scope.today = new Date();
+    
     $scope.companyEmail = "SUPPORT@CAMPUSRIDE.EDU";
     $scope.fuelPrice = 3.85;
 
