@@ -1,256 +1,247 @@
-var app = angular.module("campusRide", []);
+// AngularJS Module Declaration
+var app = angular.module('campusRide', []);
 
-app.controller("dashboardController", function ($scope) {
+// Controller Implementation
+app.controller('dashboardController', ['$scope', function ($scope) {
 
-    $scope.appName = "CampusRide Portal";
-    $scope.teamName = "Think Tank |";
-    $scope.admin = "Transport Administrator";
-    $scope.adminColor = "green";
+    // ==========================================
+    // 1. TEAM & SYSTEM SCOPE VARIABLES
+    // ==========================================
+    $scope.appName = "Car Pooling & Campus Transport Portal";
+    $scope.teamName = "Think Tank";
+    $scope.teamLeader = "Sumedha C P";
+    $scope.projectGuide = "Shahid Khan";
+    $scope.adminColor = "#0284c7";
     $scope.today = new Date();
+    $scope.companyEmail = "SUPPORT@CAMPUSRIDE.EDU";
+    $scope.fuelPrice = 3.85;
 
-    $scope.totalAvailableRides = 4;
-    $scope.activeDrivers = 4;
-    $scope.availableBuses = 6;
-    $scope.popularRoutes = 8;
-    $scope.dailyRequests = 15;
-
+    // Directives Flags
+    $scope.showAnnouncement = true;
+    $scope.hideWelcome = false;
+    $scope.systemStatus = "Active"; // Options: 'Active', 'Maintenance', 'Offline'
     $scope.currentSection = "dashboard";
-
-    $scope.showSection = function(section){
-        $scope.currentSection = section;
-    };
-
-    $scope.vehicleTypes = [
-        "Car",
-        "Bike",
-        "SUV",
-        "Van",
-        "Mini Bus"
-    ];
-
-    $scope.rides = [
-
-        {
-            driver:"Sumedha",
-            vehicle:"Car",
-            vehicleNumber:"KL-07-AA-1001",
-            pickup:"College Gate",
-            destination:"Railway Station",
-            time:new Date(2026,6,24,8,30),
-            seats:3,
-            rating:4.8
-        },
-
-        {
-            driver:"Annet",
-            vehicle:"Bike",
-            vehicleNumber:"KL-07-BB-2045",
-            pickup:"Hostel",
-            destination:"Town",
-            time:new Date(2026,6,24,9,0),
-            seats:1,
-            rating:4.5
-        },
-
-        {
-            driver:"Taniya",
-            vehicle:"SUV",
-            vehicleNumber:"KL-07-CC-9080",
-            pickup:"Library",
-            destination:"Bus Stand",
-            time:new Date(2026,6,24,10,15),
-            seats:4,
-            rating:4.9
-        },
-
-        {
-            driver:"Agnet",
-            vehicle:"Van",
-            vehicleNumber:"KL-07-DD-3012",
-            pickup:"Main Block",
-            destination:"Medical College",
-            time:new Date(2026,6,24,11,0),
-            seats:5,
-            rating:5.0
-        }
-
-    ];
-
     $scope.showRideList = true;
+    $scope.isDarkTheme = false;
 
-    $scope.toggleRideList = function(){
-        $scope.showRideList = !$scope.showRideList;
-    };
+    // Stats
+    $scope.activeDrivers = 3;
+    $scope.availableBuses = 3;
+    $scope.popularRoutes = 4;
+    $scope.searchQuery = "";
 
-    $scope.newRide = {};
+    // Data Collections
+    $scope.vehicleTypes = ["Electric Scooter", "Sedan", "SUV", "Minivan"];
+    $scope.routeNames = ["North Campus Express", "Library Circuit", "Tech Hub Direct", "South Dorm Shuttle"];
 
-    $scope.registerRide = function(){
-
-        if($scope.rideForm.$valid){
-
-            $scope.rides.push({
-
-                driver:$scope.newRide.driver,
-                vehicle:$scope.newRide.vehicle,
-                vehicleNumber:$scope.newRide.vehicleNumber,
-                pickup:$scope.newRide.pickup,
-                destination:$scope.newRide.destination,
-                time:$scope.newRide.time,
-                seats:$scope.newRide.seats,
-                rating:5.0
-
-            });
-
-            $scope.totalAvailableRides = $scope.rides.length;
-
-            alert("Ride Registered Successfully!");
-
-            $scope.newRide = {};
-
-            $scope.rideForm.$setPristine();
-            $scope.rideForm.$setUntouched();
-
+    // Default Dynamic Rides List with UNIQUE IDs
+    $scope.rides = [
+        {
+            id: 101,
+            driver: "Sumedha C P",
+            vehicle: "Sedan",
+            vehicleNumber: "KL-07-CP-101",
+            pickup: "North Dorms",
+            destination: "Engineering Building",
+            time: new Date(2026, 6, 25, 8, 30),
+            seats: 3,
+            rating: 4.9
+        },
+        {
+            id: 102,
+            driver: "Annet Paul T",
+            vehicle: "Electric Scooter",
+            vehicleNumber: "KL-07-AP-202",
+            pickup: "Main Gate",
+            destination: "Science Complex",
+            time: new Date(2026, 6, 25, 9, 15),
+            seats: 1,
+            rating: 4.8
+        },
+        {
+            id: 103,
+            driver: "Agnet Joseph",
+            vehicle: "Minivan",
+            vehicleNumber: "KL-07-AJ-303",
+            pickup: "South Quad",
+            destination: "Athletic Center",
+            time: new Date(2026, 6, 25, 10, 0),
+            seats: 5,
+            rating: 4.7
         }
-
-    };
+    ];
 
     $scope.schedules = [
-
-        {
-            bus:"CB-101",
-            route:"Hostel → College",
-            departure:"8:00 AM",
-            arrival:"8:20 AM",
-            status:"On Time"
-        },
-
-        {
-            bus:"CB-102",
-            route:"College → Railway Station",
-            departure:"9:30 AM",
-            arrival:"10:10 AM",
-            status:"Delayed"
-        },
-
-        {
-            bus:"CB-103",
-            route:"Town → College",
-            departure:"11:00 AM",
-            arrival:"11:30 AM",
-            status:"On Time"
-        },
-
-        {
-            bus:"CB-104",
-            route:"College → Bus Stand",
-            departure:"4:30 PM",
-            arrival:"5:00 PM",
-            status:"On Time"
-        }
-
+        { bus: "Bus A1", route: "North Campus Express", departure: "08:00 AM", arrival: "08:20 AM", status: "On Time" },
+        { bus: "Bus B2", route: "Library Circuit", departure: "08:30 AM", arrival: "08:50 AM", status: "On Time" },
+        { bus: "Bus C3", route: "Tech Hub Direct", departure: "09:00 AM", arrival: "09:30 AM", status: "Delayed" }
     ];
 
     $scope.bookings = [];
+    var bookingCounter = 1001;
+    var rideIdCounter = 104;
 
+    // ==========================================
+    // 2. DYNAMIC CALCULATORS
+    // ==========================================
+    $scope.getTotalAvailableSeats = function () {
+        var total = 0;
+        angular.forEach($scope.rides, function (r) {
+            total += (parseInt(r.seats, 10) || 0);
+        });
+        return total;
+    };
+
+    $scope.getDailyRequests = function () {
+        return $scope.bookings.length;
+    };
+
+    // ==========================================
+    // 3. UI NAVIGATION & THEME HANDLERS
+    // ==========================================
+    $scope.showSection = function (sectionName) {
+        $scope.currentSection = sectionName;
+    };
+
+    $scope.toggleRideList = function () {
+        $scope.showRideList = !$scope.showRideList;
+    };
+
+    $scope.toggleTheme = function () {
+        $scope.isDarkTheme = !$scope.isDarkTheme;
+    };
+
+    // ==========================================
+    // 4. MODULE 3: RIDE REGISTRATION
+    // ==========================================
+    $scope.newRide = {};
+
+    $scope.registerRide = function () {
+        // Validate required fields explicitly
+        if (!$scope.newRide.driver || !$scope.newRide.vehicle || !$scope.newRide.vehicleNumber ||
+            !$scope.newRide.pickup || !$scope.newRide.destination || !$scope.newRide.time || !$scope.newRide.seats) {
+            alert("Please fill in all required fields in the Ride Registration form.");
+            return;
+        }
+
+        var rideToAdd = {
+            id: rideIdCounter++,
+            driver: $scope.newRide.driver,
+            vehicle: $scope.newRide.vehicle,
+            vehicleNumber: $scope.newRide.vehicleNumber,
+            pickup: $scope.newRide.pickup,
+            destination: $scope.newRide.destination,
+            time: new Date($scope.newRide.time),
+            seats: parseInt($scope.newRide.seats, 10),
+            rating: 5.0
+        };
+
+        $scope.rides.push(rideToAdd);
+        $scope.activeDrivers++;
+
+        $scope.resetRideForm();
+        alert("Ride successfully registered!");
+        $scope.showSection('rides');
+    };
+
+    $scope.resetRideForm = function () {
+        $scope.newRide = {};
+        if ($scope.rideForm) {
+            $scope.rideForm.$setPristine();
+            $scope.rideForm.$setUntouched();
+        }
+    };
+
+    // ==========================================
+    // 5. MODULE 4: PASSENGER BOOKING (FIXED)
+    // ==========================================
     $scope.newBooking = {};
 
-    $scope.bookRide = function(){
+    $scope.bookRide = function () {
+        // Validate Passenger Name
+        if (!$scope.newBooking.passenger || $scope.newBooking.passenger.length < 3) {
+            alert("Please enter a valid Passenger Name (at least 3 characters).");
+            return;
+        }
 
-        if($scope.bookingForm.$valid){
+        // Validate Selected Ride Selection
+        if (!$scope.newBooking.selectedRideId) {
+            alert("Please select a ride from the dropdown.");
+            return;
+        }
 
-            var selectedRide = null;
+        // Validate Phone (10 digits)
+        var phoneRegex = /^[0-9]{10}$/;
+        if (!$scope.newBooking.phone || !phoneRegex.test($scope.newBooking.phone)) {
+            alert("Please enter a valid 10-digit contact number.");
+            return;
+        }
 
-            for(var i=0;i<$scope.rides.length;i++){
+        // Validate Seats
+        var reqSeats = parseInt($scope.newBooking.seats, 10);
+        if (isNaN(reqSeats) || reqSeats < 1) {
+            alert("Please enter a valid seat count (at least 1).");
+            return;
+        }
 
-                if($scope.rides[i].driver==$scope.newBooking.driver){
-
-                    selectedRide = $scope.rides[i];
-                    break;
-
-                }
-
+        // Find Target Ride in Array
+        var targetRide = null;
+        for (var i = 0; i < $scope.rides.length; i++) {
+            if ($scope.rides[i].id === $scope.newBooking.selectedRideId) {
+                targetRide = $scope.rides[i];
+                break;
             }
+        }
 
-            if(selectedRide!=null){
+        if (!targetRide) {
+            alert("The selected ride could not be located.");
+            return;
+        }
 
-                $scope.bookings.push({
+        // Check Available Seat Capacity
+        if (reqSeats > targetRide.seats) {
+            alert("Error: Requested seats (" + reqSeats + ") exceed available seats (" + targetRide.seats + ")!");
+            return;
+        }
 
-                    passenger:$scope.newBooking.passenger,
-                    driver:selectedRide.driver,
-                    pickup:selectedRide.pickup,
-                    destination:selectedRide.destination,
-                    time:selectedRide.time,
-                    seats:$scope.newBooking.seats
+        // Deduct seats from listing
+        targetRide.seats -= reqSeats;
 
-                });
+        // Build Confirmation Payload
+        var bookingRecord = {
+            bookingId: "BK-" + bookingCounter++,
+            passenger: $scope.newBooking.passenger,
+            driver: targetRide.driver,
+            pickup: targetRide.pickup,
+            destination: targetRide.destination,
+            time: targetRide.time,
+            seats: reqSeats,
+            phone: $scope.newBooking.phone
+        };
 
-                selectedRide.seats =
-                selectedRide.seats -
-                parseInt($scope.newBooking.seats);
+        // Push to global array
+        $scope.bookings.push(bookingRecord);
 
-                $scope.dailyRequests++;
+        // Reset Form
+        $scope.resetBookingForm();
 
-                alert("Booking Confirmed!");
+        // Alert user & automatically switch view to Booking Summary
+        alert("Booking Confirmed! Reference ID: " + bookingRecord.bookingId);
+        $scope.showSection('summary');
+    };
 
-            }
-
-            $scope.newBooking = {};
-
+    $scope.resetBookingForm = function () {
+        $scope.newBooking = {};
+        if ($scope.bookingForm) {
             $scope.bookingForm.$setPristine();
             $scope.bookingForm.$setUntouched();
-
         }
-
     };
 
-    $scope.routeNames = [
-
-        "Railway Station",
-        "Town",
-        "Medical College",
-        "Bus Stand"
-
-    ];
-
-    $scope.selectedRoute = $scope.routeNames[0];
-
-    $scope.routeInfo = function(route){
-
-        switch(route){
-
-            case "Railway Station":
-                return "Fastest route to Railway Station.";
-
-            case "Town":
-                return "Ride available every hour.";
-
-            case "Medical College":
-                return "Recommended for staff and students.";
-
-            case "Bus Stand":
-                return "Connects with KSRTC buses.";
-
-            default:
-                return "Campus Transportation.";
-
-        }
-
+    // Helper Info Getter
+    $scope.routeInfo = function (route) {
+        if (!route) return "Select a route above to view operational details.";
+        return "Route '" + route + "' operates shuttles every 15 minutes between core campus stops.";
     };
 
-    $scope.portalCode = "CRP2026";
-
-    $scope.bookingId = "BK1001";
-
-    $scope.isReadOnly = true;
-
-    $scope.hideWelcome = false;
-
-    $scope.showAnnouncement = true;
-
-    $scope.systemStatus = "Active";
-
-    $scope.welcomeMessage = "";
-
-    $scope.companyEmail = "CampusRide@FISAT.EDU";
-
-});
+}]);
