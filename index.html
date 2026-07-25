@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="campusRide">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>CampusRide - Smart Campus Transport System</title>
+
+    <script src="node_modules/angular/angular.min.js"></script>
+    <script src="js/app.js"></script>
+
+    <link rel="stylesheet" href="css/style.css">
+
+</head>
+
+<body
+ng-controller="dashboardController"
+ng-init="welcomeMessage='Welcome to CampusRide Portal  |'">
+
+<header>
+
+    <h1>{{appName}}</h1>
+
+    <p>{{welcomeMessage}}</p>
+
+    <br>
+
+    <p>
+        Team :
+        <span ng-style="{'color':adminColor,'font-weight':'600'}">
+            {{teamName}}
+        </span>
+    </p>
+
+    <p>
+        {{today | date:'fullDate'}}
+    </p>
+
+    <hr>
+
+    <p>
+
+        <strong>| Email :</strong>
+
+        {{companyEmail | lowercase}}
+
+    </p>
+
+    
+</header>
+
+<div class="container">
+
+<aside class="sidebar">
+
+    <div class="logo">
+
+        <h2>CampusRide</h2>
+
+    
+
+    </div>
+
+    <button ng-click="showSection('dashboard')">
+        Dashboard
+    </button>
+
+    <button ng-click="showSection('rides')">
+        Ride Directory
+    </button>
+
+    <button ng-click="showSection('register')">
+        Ride Registration
+    </button>
+
+    <button ng-click="showSection('booking')">
+        Book a Ride
+    </button>
+
+    <button ng-click="showSection('schedule')">
+        Transport Schedule
+    </button>
+
+    <button ng-click="showSection('summary')">
+        Booking Details
+    </button>
+
+</aside>
+
+<section class="content">
+
+<div ng-show="currentSection=='dashboard'">
+
+<h2>Dashboard Overview</h2>
+
+<div class="cards">
+
+<div class="card">
+
+<h3>Total Available Rides</h3>
+
+<h1>{{totalAvailableRides}}</h1>
+
+</div>
+
+<div class="card">
+
+<h3>Active Drivers</h3>
+
+<h1>{{activeDrivers}}</h1>
+
+</div>
+
+<div class="card">
+
+<h3>Campus Buses</h3>
+
+<h1>{{availableBuses}}</h1>
+
+</div>
+
+<div class="card">
+
+<h3>Popular Routes</h3>
+
+<h1>{{popularRoutes}}</h1>
+
+</div>
+
+<div class="card">
+
+<h3>Today's Requests</h3>
+
+<h1>{{dailyRequests}}</h1>
+
+</div>
+
+</div>
+
+<hr>
+
+<h2>System Information</h2>
+
+<p>
+
+<strong>Application :</strong>
+
+{{appName | uppercase}}
+
+</p>
+
+<p>
+
+<strong>Administrator :</strong>
+
+{{admin}}
+
+</p>
+
+<p>
+
+<strong>Date :</strong>
+
+{{today | date:'mediumDate'}}
+
+</p>
+
+<p ng-if="showAnnouncement">
+
+<strong>Announcement :</strong>
+
+CampusRide services are active today.
+
+</p>
+
+<hr>
+
+<h2>System Status</h2>
+
+<div ng-switch="systemStatus">
+
+<p ng-switch-when="Active" class="green">
+System Status : Active
+</p>
+
+<p ng-switch-when="Maintenance" class="red">
+System Status : Maintenance
+</p>
+
+<p ng-switch-default>
+System Status : Unknown
+</p>
+
+</div>
+
+</div>
+<div ng-show="currentSection=='rides'">
+
+<h2>Ride Directory</h2>
+
+<label>
+
+Show Available Rides
+
+</label>
+
+<button ng-click="toggleRideList()">
+
+Toggle List
+
+</button>
+
+<br><br>
+
+<div ng-show="showRideList">
+
+<div
+class="ride-card"
+ng-repeat="ride in rides">
+
+<h3>{{ride.driver}}</h3>
+
+<p>
+
+<strong>Vehicle :</strong>
+
+{{ride.vehicle}}
+
+</p>
+
+<p>
+
+<strong>Vehicle Number :</strong>
+
+{{ride.vehicleNumber}}
+
+</p>
+
+<p>
+
+<strong>Pickup :</strong>
+
+{{ride.pickup}}
+
+</p>
+
+<p>
+
+<strong>Destination :</strong>
+
+{{ride.destination}}
+
+</p>
+
+<p>
+
+<strong>Departure :</strong>
+
+{{ride.time | date:'shortTime'}}
+
+</p>
+
+<p>
+
+<strong>Available Seats :</strong>
+
+<span ng-class="{
+
+'green':ride.seats>=3,
+
+'red':ride.seats<3
+
+}">
+
+{{ride.seats | number:0}}
+
+</span>
+
+</p>
+
+<p>
+
+<strong>Driver Rating :</strong>
+
+{{ride.rating}}
+
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+<div ng-show="currentSection=='register'">
+
+<h2>Ride Registration</h2>
+
+<form
+name="rideForm"
+novalidate
+ng-submit="registerRide()">
+
+<label>
+
+Driver Name
+
+</label>
+
+<br>
+
+<input
+type="text"
+name="driver"
+ng-model="newRide.driver"
+required
+ng-minlength="3"
+ng-maxlength="25">
+
+<p class="error"
+ng-show="rideForm.driver.$touched &&
+rideForm.driver.$error.required">
+
+Driver name is required.
+
+</p>
+
+<p class="error"
+ng-show="rideForm.driver.$error.minlength">
+
+Minimum 3 characters required.
+
+</p>
+
+<br>
+
+<label>
+
+Vehicle Type
+
+</label>
+
+<br>
+
+<select
+ng-model="newRide.vehicle"
+ng-options="vehicle for vehicle in vehicleTypes"
+required>
+
+</select>
+
+<br><br>
+
+<label>
+
+Vehicle Number
+
+</label>
+
+<br>
+
+<input
+type="text"
+name="vehicleNumber"
+ng-model="newRide.vehicleNumber"
+required>
+
+<p class="error"
+ng-show="rideForm.vehicleNumber.$touched &&
+rideForm.vehicleNumber.$error.required">
+
+Vehicle Number is required.
+
+</p>
+
+<br>
+
+<label>
+
+Pickup Location
+
+</label>
+
+<br>
+
+<input
+type="text"
+name="pickup"
+ng-model="newRide.pickup"
+required>
+
+<p class="error"
+ng-show="rideForm.pickup.$touched &&
+rideForm.pickup.$error.required">
+
+Pickup location is required.
+
+</p>
+
+<br>
+
+<label>
+
+Destination
+
+</label>
+
+<br>
+
+<input
+type="text"
+name="destination"
+ng-model="newRide.destination"
+required>
+
+<p class="error"
+ng-show="rideForm.destination.$touched &&
+rideForm.destination.$error.required">
+
+Destination is required.
+
+</p>
+
+<br>
+
+<label>
+
+Departure Time
+
+</label>
+
+<br>
+
+<input
+type="datetime-local"
+name="departure"
+ng-model="newRide.time"
+required>
+
+<p class="error"
+ng-show="rideForm.departure.$touched &&
+rideForm.departure.$error.required">
+
+Departure time is required.
+
+</p>
+
+<br>
+
+<label>
+
+Available Seats
+
+</label>
+
+<br>
+
+<input
+type="number"
+name="seats"
+ng-model="newRide.seats"
+min="1"
+max="8"
+required>
+
+<p class="error"
+ng-show="rideForm.seats.$touched &&
+rideForm.seats.$error.required">
+
+Available seats are required.
+
+</p>
+
+<br><br>
+
+<button
+type="submit"
+ng-disabled="rideForm.$invalid">
+
+Register Ride
+
+</button>
+
+<button type="reset">
+
+Reset
+
+</button>
+
+</form>
+
+</div>
+
+<div ng-show="currentSection=='booking'">
+
+<h2>Book a Ride</h2>
+
+<form
+name="bookingForm"
+novalidate
+ng-submit="bookRide()">
+
+<label>
+
+Passenger Name
+
+</label>
+
+<br>
+
+<input
+type="text"
+name="passenger"
+ng-model="newBooking.passenger"
+required
+ng-minlength="3"
+ng-maxlength="25">
+
+<p class="error"
+ng-show="bookingForm.passenger.$touched &&
+bookingForm.passenger.$error.required">
+
+Passenger name is required.
+
+</p>
+
+<br>
+
+<label>
+
+Select Ride
+
+</label>
+
+<br>
+
+<select
+ng-model="newBooking.driver"
+ng-options="ride.driver as (ride.driver + ' - ' + ride.destination) for ride in rides"
+required>
+
+</select>
+
+<br><br>
+
+<label>
+
+Contact Number
+
+</label>
+
+<br>
+
+<input
+type="text"
+name="phone"
+ng-model="newBooking.phone"
+ng-pattern="/^[0-9]{10}$/"
+required>
+
+<p class="error"
+ng-show="bookingForm.phone.$touched &&
+bookingForm.phone.$error.required">
+
+Contact number is required.
+
+</p>
+
+<p class="error"
+ng-show="bookingForm.phone.$error.pattern">
+
+Enter a valid 10-digit mobile number.
+
+</p>
+
+<br>
+
+<label>
+
+Seats Required
+
+</label>
+
+<br>
+
+<input
+type="number"
+name="requiredSeats"
+ng-model="newBooking.seats"
+min="1"
+max="5"
+required>
+
+<br><br>
+
+<label>
+
+Booking ID
+
+</label>
+
+<br>
+
+<input
+type="text"
+ng-model="bookingId"
+ng-readonly="isReadOnly">
+
+<br><br>
+
+<button
+type="submit"
+ng-disabled="bookingForm.$invalid">
+
+Confirm Booking
+
+</button>
+
+<button type="reset">
+
+Reset
+
+</button>
+
+</form>
+
+</div>
+<div ng-show="currentSection=='schedule'">
+
+<h2>Campus Transport Schedule</h2>
+
+<table>
+
+<thead>
+
+<tr>
+
+<th>Bus</th>
+
+<th>Route</th>
+
+<th>Departure</th>
+
+<th>Arrival</th>
+
+<th>Status</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+<tr ng-repeat="bus in schedules">
+
+<td>{{bus.bus}}</td>
+
+<td>{{bus.route}}</td>
+
+<td>{{bus.departure}}</td>
+
+<td>{{bus.arrival}}</td>
+
+<td>
+
+<span ng-class="{
+
+'green':bus.status=='On Time',
+
+'red':bus.status=='Delayed'
+
+}">
+
+{{bus.status}}
+
+</span>
+
+</td>
+
+</tr>
+
+</tbody>
+
+</table>
+
+</div>
+
+<div ng-show="currentSection=='summary'">
+
+<h2>Booking Details</h2>
+
+<div
+class="summary-card"
+ng-repeat="booking in bookings">
+
+<h3>{{booking.passenger}}</h3>
+
+<p><strong>Driver :</strong> {{booking.driver}}</p>
+<p><strong>Pickup :</strong> {{booking.pickup}}</p>
+<p><strong>Destination :</strong> {{booking.destination}}</p>
+<p><strong>Departure :</strong> {{booking.time | date:'short'}}</p>
+<p><strong>Seats :</strong> {{booking.seats}}</p>
+
+</div>
+
+<hr>
+
+<h2>System Statistics</h2>
+
+<p><strong>Total Available Rides :</strong> {{totalAvailableRides}}</p>
+<p><strong>Active Drivers :</strong> {{activeDrivers}}</p>
+<p><strong>Campus Buses :</strong> {{availableBuses}}</p>
+<p><strong>Daily Ride Requests :</strong> {{dailyRequests}}</p>
+
+<hr>
+
+<h2>Route Information</h2>
+
+<select
+ng-model="selectedRoute"
+ng-options="route for route in routeNames">
+
+</select>
+
+<p>{{routeInfo(selectedRoute)}}</p>
+
+<hr>
+
+<h2>System Status</h2>
+
+<div ng-switch="systemStatus">
+
+<p ng-switch-when="Active">
+🟢 System is Active
+</p>
+
+<p ng-switch-when="Maintenance">
+🟡 System Under Maintenance
+</p>
+
+<p ng-switch-default>
+🔴 System Offline
+</p>
+
+</div>
+
+<div ng-if="showAnnouncement">
+
+<p style="color:green;font-weight:bold;">
+
+CampusRide Services are Available Today!
+
+</p>
+
+</div>
+
+<div ng-hide="hideWelcome">
+
+<p>
+
+Welcome to CampusRide Portal
+
+</p>
+
+</div>
+
+<p>
+
+Company Email :
+{{companyEmail | lowercase}}
+
+</p>
+
+<p>
+
+Fuel Price :
+{{fuelPrice | number:2}}
+
+</p>
+
+</div>
+
+<hr>
+
+<h2>Ride Registration Status</h2>
+
+<p>Form Valid : {{rideForm.$valid}}</p>
+<p>Form Invalid : {{rideForm.$invalid}}</p>
+<p>Form Dirty : {{rideForm.$dirty}}</p>
+<p>Form Pristine : {{rideForm.$pristine}}</p>
+<p>Driver Field Touched : {{rideForm.driver.$touched}}</p>
+<p>Driver Field Valid : {{rideForm.driver.$valid}}</p>
+
+<hr>
+
+<h2>Registered Rides</h2>
+
+<table>
+
+<thead>
+
+<tr>
+
+<th>#</th>
+<th>Driver</th>
+<th>Vehicle</th>
+<th>Vehicle No.</th>
+<th>Pickup</th>
+<th>Destination</th>
+<th>Seats</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+<tr ng-repeat="ride in rides">
+
+<td>{{$index+1}}</td>
+<td>{{ride.driver}}</td>
+<td>{{ride.vehicle}}</td>
+<td>{{ride.vehicleNumber}}</td>
+<td>{{ride.pickup}}</td>
+<td>{{ride.destination}}</td>
+<td>{{ride.seats | number:0}}</td>
+
+</tr>
+
+</tbody>
+
+</table>
+
+</section>
+
+</div>
+
+</body>
+
+</html>
